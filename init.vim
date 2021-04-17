@@ -12,6 +12,8 @@ set hidden
 set noerrorbells
 set tabstop=4 softtabstop=4
 set shiftwidth=4
+set autoindent
+set smartindent
 set expandtab
 set smartindent
 set nu
@@ -33,10 +35,9 @@ set cmdheight=2
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience
-set updatetime=50
+set updatetime=500
 
-" Don't pass messages to |ins-completion-menu|.
-set shortmess+=c
+set backspace=start,eol,indent
 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -49,13 +50,24 @@ call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
     Plug 'nvim-telescope/telescope-fzy-native.nvim'
+    Plug 'itchyny/lightline.vim'
+    Plug 'tpope/vim-surround'
+    Plug 'ThePrimeagen/vim-be-good'
     Plug 'gruvbox-community/gruvbox'
 call plug#end()
 
+let mapleader = " "
+
+" Find files using Telescope command-line sugar
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+inoremap <leader>jk <Esc>
+
 colorscheme gruvbox
 highlight Normal guibg=none
-
-let mapleader = " "
 
 fun! TrimWhitespace()
     let l:save = winsaveview()
