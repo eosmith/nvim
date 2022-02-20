@@ -1,61 +1,50 @@
-local opts = { noremap = true, silent = true }
+local keymap = require 'lib.utils'.keymap
 
-local term_opts = { silent = true }
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
--- Shorten function name
-local keymap = vim.api.nvim_set_keymap
+keymap('n', '<leader>k', ':nohlsearch<CR>')
+keymap('n', '<leader>Q', ':bufdo bdelete<CR>')
 
---Remap space as leader key
-keymap("", "<Space>", "<Nop>", opts)
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+-- Allow gf to open non-existent files
+keymap('', 'gf', ':edit <cfile><CR>')
 
--- Modes
---   normal_mode = "n",
---   insert_mode = "i",
---   visual_mode = "v",
---   visual_block_mode = "x",
---   term_mode = "t",
---   command_mode = "c",
+-- Reselect visual selection after indenting
+keymap('v', '<', '<gv')
+keymap('v', '>', '>gv')
 
--- Normal --
--- Better window navigation
-keymap("n", "<C-h>", "<C-w>h", opts)
-keymap("n", "<C-j>", "<C-w>j", opts)
-keymap("n", "<C-k>", "<C-w>k", opts)
-keymap("n", "<C-l>", "<C-w>l", opts)
+-- Maintain the cursor position when yanking a visual selection
+-- http://ddrscott.github.io/blog/2016/yank-without-jank/
+keymap('v', 'y', 'myy`hay')
+keymap('v', 'Y', 'myY`y')
+
+-- When text is wrapped, move by terminal rows, not lines, unless a count is provided
+keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true })
+keymap('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true })
+
+-- Paste replae visual selection without copying it
+keymap('v', 'p', '"_dP') -- TODO: vim-pasta is breaking this :(
+
+-- Easy insertion of a trailing ; or , from insert mode
+keymap('i', ';;', '<Esc>A;<Esc>')
+keymap('i', ',,', '<Esc>A,<Esc>')
+
+-- Open the current file in the default program (on Mac I think this is just `open`)
+keymap('n', '<leader>x', ':!xdg-open %<cr><cr>')
+
+-- Disable annoying command line thing
+keymap('n', 'q:', ':q<CR>')
 
 -- Resize with arrows
-keymap("n", "<C-Up>", ":resize -2<CR>", opts)
-keymap("n", "<C-Down>", ":resize +2<CR>", opts)
-keymap("n", "<C-Left>", ":vertial resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
-
--- Naviagate buffers
-keymap("n", "<S-l>", ":bnext<CR>", opts)
-keymap("n", "<S-h>", ":bprevious<CR>", opts)
+keymap('n', '<C-Up>', ':resize +2<CR>')
+keymap('n', '<C-Down>', ':resize -2<CR>')
+keymap('n', '<C-Left>', ':vertical resize -2<CR>')
+keymap('n', '<C-Right>', ':vertical resize +2<CR>')
 
 -- Move text up and down
-keymap("n", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
-keymap("n", "<A-k>", "<Esc>:m .-2<CR>==gi", opts)
-
--- Insert --
--- Press jk fast to enter
-keymap("i", "jk", "<ESC>", opts)
-
--- Visual --
--- Stay in indent mode
-keymap("v", "<", "<gv", opts)
-keymap("v", ">", ">gv", opts)
-
--- Move text up and down
-keymap("v", "<A-j>", ":m .+1<CR>==", opts)
-keymap("v", "<A-k>", ":m .-2<CR>==", opts)
-keymap("v", "p", '"_dP', opts)
-
--- Visual Block --
--- Move text up and down
-keymap("x", "J", ":move '>+1<CR>gv-gv", opts)
-keymap("x", "K", ":move '<-2<CR>gv-gv", opts)
-keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", opts)
-keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
+keymap('n', '<A-j>', ':move .+1<CR>==') -- TODO: Something seems to be sending Alt occasionally and makes me mess up
+keymap('n', '<A-k>', ':move .-2<CR>==') -- TODO: Something seems to be sending Alt occasionally and makes me mess up
+keymap('i', '<A-j>', '<Esc>:move .+1<CR>==gi')
+keymap('i', '<A-k>', '<Esc>:move .-2<CR>==gi')
+keymap('x', '<A-j>', ":move '>+1<CR>gv-gv")
+keymap('x', '<A-k>', ":move '<-2<CR>gv-gv")
