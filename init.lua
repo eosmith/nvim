@@ -1,6 +1,0 @@
-require("user.options")
-require("user.icons")
-require("user.plugins")
-require("user.nvim-tree")
-require("user.lualine")
-require("user.keymaps")
